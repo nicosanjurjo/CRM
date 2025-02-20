@@ -1,0 +1,105 @@
+.container {
+    max-width: 95%;
+    margin: 0 auto;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+  }
+  
+  .table {
+    width: 100%;
+    margin-bottom: 2rem;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.75rem;
+  }
+  
+  .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    text-align: center !important;
+  
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.075);
+  }
+
+  .btn {
+    border-radius: 5px;
+  }
+  
+  .form-control {
+    border-radius: 5px;
+  }
+
+.submenu {
+    background: var(--light);
+    padding: 1rem;
+    display: flex;
+    justify-content: center; /* Centra los elementos del submenú */
+    gap: 5rem;
+}
+
+.submenu-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    background: white;
+    transition: all 0.3s;
+    text-align: center; /* Asegura que el texto esté alineado */
+    text-decoration: none;
+    color: black;
+    
+}
+
+.submenu-item:hover {
+    background: var(--accent);
+    color: white;
+}
+
+.submenu-item.active {
+    background: var(--accent);
+    color: white;
+}
+
+.campo-destacado {
+    font-weight: bold; /* Negrita */
+    border: 2px solid #007bff; /* Borde azul */
+    background-color: #f0f8ff; /* Fondo sutil */
+}
+
+.label-destacado {
+    font-weight: bold;
+}
+
+/* Estilo para campos readonly */
+input[readonly] {
+    background-color: #e9ecef; /* Fondo gris claro */
+    color: #6c757d; /* Texto gris oscuro */
+    border: 1px solid #ced4da; /* Borde estándar */
+    font-style: italic; /* Texto en cursiva */
+    cursor: not-allowed; /* Indica que no es editable */
+}
+
+/* Opción adicional para resaltar más los campos readonly */
+input[readonly]:focus {
+    outline: none; /* Sin contorno al hacer clic */
+    border-color: #adb5bd; /* Borde gris oscuro */
+}
+
+
+.table td {
+    text-align: center !important;
+}
+
+.table th {
+    text-align: center !important;
+}

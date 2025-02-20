@@ -1,0 +1,42 @@
+{% extends "main/index.html" %}
+{% load static %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/contratos.css' %}">{% endblock  %}
+{% block content %}
+<!-- Contenedor principal con borde gris claro -->
+<div class="container mt-5" style="border: 1px solid #d3d3d3; padding: 20px;">
+    <form id="formContrato" method="POST">
+      {% csrf_token %}
+      <input type="hidden" id="clienteid" name="clienteid" value="{{ cliente.id }}">
+      
+      <div class="mb-3">
+        <label for="cliente" class="form-label">Cliente</label>
+        <input type="text" class="form-control" id="cliente" name="cliente" value="{{ cliente.nombre }}" readonly>
+      </div>
+  
+      <div class="mb-3">
+        <label for="productos" class="form-label">Productos</label>
+        <input type="text" class="form-control" id="productos" name="productos" required>
+      </div>
+  
+      <div class="mb-3">
+        <label for="modalidad" class="form-label">Modalidad</label>
+        <select class="form-select" id="modalidad" name="modalidad" required>
+          <option value="Financiado">Financiado</option>
+          <option value="Contado">Contado</option>
+        </select>
+      </div>
+  
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary">Guardar Contrato</button>
+      </div>
+    </form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script type="text/javascript" src="{% static 'js/contratos.js' %}"></script>
+{% endblock  %}

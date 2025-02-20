@@ -1,0 +1,204 @@
+{% extends "main/index.html" %}
+{% load static %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/actividades.css' %}">{% endblock  %}
+{% block submenu %}
+<div class="submenu">
+    <a href="{% url 'actividadesPasadas' %}" 
+       class="submenu-item {% if request.path == '/actividades/pasadas/' %}active{% endif %}">
+       Actividades pasadas
+    </a>
+    <a href="{% url 'actividadesHoy' %}" 
+       class="submenu-item {% if request.path == '/actividades/hoy/' %}active{% endif %}">
+       Actividades para hoy
+    </a>
+    <a href="{% url 'actividadesFuturas' %}" 
+       class="submenu-item {% if request.path == '/actividades/futuras/' %}active{% endif %}">
+       Actividades futuras
+    </a>
+</div>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+   <h2>Proximas actividades pendientes</h2>
+   <button type="button" class="btn btn-primary" id="ver-completadas" style="margin-right: 240px">Ver suspendidas</button>
+</div>
+<div class="container mt-4">
+
+   <!-- Tabla con DataTables -->
+   <div class="table-responsive">
+    <table id="actividades" class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Creada</th>.
+                <th>Nombre cli.</th>
+                <th>ID cli.</th>
+                <th>Prioridad</th>
+                <th>Actividad</th>
+                <th>Fecha programada</th>
+                <th>Hora programada</th>
+                <th>Teléfono/WP</th>
+                <th>Estado</th>
+                <th>Actividad previa</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for actividad in actividades %}
+            {% if actividad.estado == 'Pendiente' and actividad.cliente.estado %}
+             <tr class="actividad-row" data-id="{{ actividad.id }}" 
+                data-actividad="{{ actividad.actividad_programada }}"
+                data-observaciones="{{ actividad.observaciones }}"
+                data-actividad-previa="{{ actividad.actividad_anterior }}"
+                data-clienteid="{{ actividad.cliente.id }}"
+                data-clientenombre="{{ actividad.cliente.nombre }}"
+                data-estado="{{ actividad.get_estado_display }}"
+                data-prioridad="{{ actividad.prioridad }}"
+                data-fecha="{{ actividad.fecha }}"
+                data-hora="{{ actividad.hora }}"
+                data-email="{{ actividad.cliente.email }}">
+                <td>{{ actividad.created_at | date:"d/m/y H:i"}}</td>
+                <td>{{ actividad.cliente.nombre }}</td>
+                <td>{{ actividad.cliente.id }}</td>
+                <td>{{ actividad.prioridad }}</td>
+                <td>{{ actividad.actividad_programada }}</td>
+                <td>{{ actividad.fecha | date:"d/m/y" }}</td>
+                <td>{{ actividad.hora }}</td>
+                <td><span style="background-color: white; border-radius: 10px; padding: 5px;">
+                 <a href="https://wa.me/{{ actividad.cliente.telefono }}" target="_blank" class="text-decoration-none">
+                     {{ actividad.cliente.telefono_movil }}
+                 </a></span></td>
+                <td>{{ actividad.estado }}</td>
+                <td>{{ actividad.actividad_anterior }}</td>
+                <td><button type="button" class="btn btn-primary seleccionar-actividad">Seleccionar</button></td>
+             </tr>
+             {% endif %}
+             {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+   <!-- Modal para mostrar actividades suspendidas -->
+   <div class="modal fade" id="completadasModal" tabindex="-1" aria-labelledby="completadasModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="completadasModalLabel">Actividades futuras suspendidas</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                          <thead class="table-dark">
+                              <tr>
+                                <th>Prioridad</th>
+                                <th>Fecha programada</th>
+                                <th>Hora programada</th>
+                                <th>Cliente</th>
+                                <th>Actividad</th>
+                                <th>Teléfono/WP</th>
+                                <th>Estado</th>
+                                <th>Actividad previa</th>
+                                <th>Creada</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% for actividad in actividades %}
+                              {% if actividad.estado == 'Suspendida' and actividad.cliente.activo %}
+                              <tr>
+                                  <td>{{ actividad.prioridad }}</td>
+                                  <td>{{ actividad.fecha | date:"d/m/y" }}</td>
+                                  <td>{{ actividad.hora }}</td>
+                                  <td>{{ actividad.cliente.nombre }}</td>
+                                  <td>{{ actividad.actividad_programada }}</td>
+                                  <td>{{ actividad.cliente.telefono_movil }}</td>
+                                  <td style="background-color: #ff5835">{{ actividad.estado }}</td>
+                                  <td>{{ actividad.actividad_anterior }}</td>
+                                  <td>{{ actividad.created_at | date:"d/m/y H:i"}}</td>
+                              </tr>
+                              {% endif %}
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+    
+      <!-- Formulario para actividad seleccionada -->
+      <div id="formulario-actividad" class="mt-4">
+        <h3>Detalle de la actividad</h3>
+        <form id="actividad-form" method="POST" action="">
+          {% csrf_token %}
+            <div class="row mb-3">
+                <input type="hidden" id="actividadId" name="actividadId">
+                <input type="hidden" id="clienteId" name="clienteId">
+                <div class="col-md-3">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <input type="text" class="form-control" id="cliente" name="cliente" readonly>
+                </div>
+                <div class="col-md-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control" id="email" name="email" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label for="actividad-previa" class="form-label">Actividad previa</label>
+                    <input type="text" class="form-control" id="actividad-previa" name="actividad-previa" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label for="estado" class="form-label">Estado</label>
+                    <input type="text" class="form-control" id="estado" name="estado" readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                  <label for="prioridad" class="form-label">Prioridad</label>
+                  <select class="form-control" id="prioridad" name="prioridad">
+                      <option value="Alta">Alta</option>
+                      <option value="Media">Media</option>
+                      <option value="Baja">Baja</option>
+                  </select>
+              </div>
+              <div class="col-md-6">
+                  <label for="actividad" class="form-label label-destacado">Actividad</label>
+                  <input type="text" class="form-control campo-destacado" id="actividad" name="actividad" readonly>
+              </div>            
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                  <label for="observaciones" class="form-label">Observaciones:</label>
+                  <textarea id="observaciones" name="observaciones" class="form-control" rows="3"></textarea>
+                </div>    
+            </div> 
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="fecha" class="form-label">Fecha programada</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha">
+                </div>
+                <div class="col-md-6">
+                    <label for="hora" class="form-label">Hora programada</label>
+                    <input type="time" class="form-control" id="hora" name="hora">
+                </div>
+            </div>
+  
+            <!-- Botones -->
+            <div class="d-flex justify-content-between mt-4">
+                 <button type="button" class="btn btn-primary me-1 d-none" id="guardar-cambios">Guardar cambios</button>
+                 <button type="button" class="btn btn-secondary me-1 d-none" id="descartar-cambios">Descartar cambios</button>
+  
+                <!-- Botones alineados al margen derecho -->
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-danger" id="suspender-actividad">Suspender</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script type="text/javascript" src="{% static 'js/actividades.js' %}"></script>
+{% endblock %}

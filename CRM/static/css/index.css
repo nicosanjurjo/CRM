@@ -1,0 +1,16 @@
+/* Estilos del footer */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333; /* Color de fondo del footer */
+    color: white; /* Color del texto */
+    padding: 10px 0; /* Espaciado del footer */
+    text-align: center; /* Centrar el texto */
+    font-size: 14px; /* Tamaño de la fuente */
+}
+
+.footer p {
+    margin: 0; /* Eliminar margen del párrafo */
+}

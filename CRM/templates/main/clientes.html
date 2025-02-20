@@ -1,0 +1,317 @@
+
+{% extends "main/index.html" %}
+
+{% block title %}Clientes - CRM System{% endblock %}
+{% load static %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/clientes.css' %}">{% endblock  %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Gestión de clientes</h2>
+  
+  <!-- Tabla de Clientes -->
+  <div class="table-responsive">
+    <table id="clientesTable" class="table table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>#Cliente</th>
+          <th>Nombre</th>
+          <th>Ciudad</th>
+          <th>Estado</th>
+          <th>E-mail</th>
+          <th>Telefono(movil)</th>
+          <th>Nivel</th>
+          <th>Ultima actividad completada</th>
+          <th>Proxima actividad</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cliente in clientes %}
+        {% if cliente.activo %}
+        <tr class="cliente-row" data-id="{{ cliente.id }}"
+            data-numcliente="{{ cliente.numero_cliente }}"
+            data-nombre="{{ cliente.nombre }}"
+            data-direccion="{{ cliente.direccion }}"
+            data-ciudad="{{ cliente.ciudad }}"
+            data-estado="{{ cliente.estado }}"
+            data-cp="{{ cliente.cp }}"
+            data-email="{{ cliente.email }}"
+            data-telcasa="{{ cliente.telefono_casa }}"
+            data-teltrabajo="{{ cliente.telefono_trabajo }}"
+            data-telmovil="{{ cliente.telefono_movil }}"
+            data-distribuidor="{{ cliente.distribuidor }}"
+            data-vendedor="{{ cliente.vendedor }}"
+            data-nivel="{{ cliente.nivel }}"
+            data-ultimacompra="{{ cliente.ultima_compra }}"
+            data-ultimopago="{{ cliente.ultimo_pago }}"
+            data-pedidos="{{ cliente.pedidos }}"
+            data-tipo="{{ cliente.tipo }}"
+            data-ultima-actividad="{{ cliente.ultima_actividad }}">
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.numero_cliente }}</td>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.ciudad }}</td>
+            <td>{{ cliente.estado }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>{{ cliente.telefono_movil }}</td>
+            <td>{{ cliente.nivel }}</td>
+            <td>{{ cliente.ultima_actividad|default:"No disponible" }}</td>
+            <td>{{ cliente.proxima_actividad|default:"No disponible" }}</td>
+          <td><button type="button" class="btn btn-primary seleccionar-cliente">Seleccionar</button></td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Formulario de Cliente y Botones -->
+  <div class="row">
+    <!-- Formulario -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h3 id="formTitle" class="card-title mb-0">Ingrese los datos</h3>
+        </div>
+        <div class="card-body">
+          <form id="clienteForm" method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" id="clienteId" name="clienteId">
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="#cliente" class="form-label">#Cliente:</label>
+                <input type="text" id="numcliente" name="numcliente" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="nombre" class="form-label">* Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="direccion" class="form-label">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="ciudad" class="form-label">Ciudad:</label>
+                <input type="text" id="ciudad" name="ciudad" class="form-control">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="estado" class="form-label">Estado:</label>
+                <input type="text" id="estado" name="estado" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="CP" class="form-label">CP:</label>
+                <input type="text" id="CP" name="CP" class="form-control">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" id="email" name="email" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="telmovil" class="form-label">* Teléfono móvil:</label>
+                <input type="text" id="telmovil" name="telmovil" class="form-control" required>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="telcasa" class="form-label">Teléfono casa:</label>
+                <input type="text" id="telcasa" name="telcasa" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="teltrabajo" class="form-label">Teléfono trabajo:</label>
+                <input type="textr" id="teltrabajo" name="teltrabajo" class="form-control">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="distribuidor" class="form-label">Distribuidor:</label>
+                <input type="text" id="distribuidor" name="distribuidor" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="vendedor" class="form-label">Vendedor:</label>
+                <input type="text" id="vendedor" name="vendedor" class="form-control">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="nivel" class="form-label">Nivel:</label>
+                <input type="text" id="nivel" name="nivel" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="ultimacompra" class="form-label">Última compra:</label>
+                <input type="date" id="ultimacompra" name="ultimacompra" class="form-control">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="ultimopago" class="form-label">Último pago:</label>
+                <input type="date" id="ultimopago" name="ultimopago" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tipo" class="form-label">Tipo:</label>
+                <input type="text" id="tipo" name="tipo" class="form-control">
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <label for="pedidos" class="form-label">Pedidos:</label>
+                <textarea id="pedidos" name="pedidos" class="form-control" rows="3"></textarea>
+              </div>
+            </div>
+
+            <!-- Contenedor de botones de edición, oculto por defecto -->
+            <div class="mt-4">
+              <button type="submit" id="createClient" class="btn btn-primary w-100">Crear cliente</button>
+              <div class="d-flex gap-3 mt-3" id="editButtons">
+                <button type="submit" id="disableClient" class="btn btn-danger flex-grow-1">Dejar inactivo</button>
+                <button type="submit" id="updateClient" class="btn btn-primary flex-grow-1">Actualizar datos</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Espacio para botones -->
+    <div class="col-lg-4">
+      <div class="d-flex flex-column gap-3 mb-4">
+        <button id="newClientButton" class="btn btn-success w-100">Alta de Cliente</button>
+        <button id="showInactiveClients" class="btn btn-secondary w-100">Mostrar inactivos</button>
+        <button id="asignarContrato" class="btn btn-warning w-100">Asignar contrato</button>
+      </div>
+      <div class="card shadow">
+        <div class="card-header bg-secondary text-white">
+          <h4 class="mb-0">Programar actividad</h4>
+        </div>
+        <div class="card-body">
+          <form id="activityForm" method="POST" action="">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label for="actividadRealizada" class="form-label">Actividad anterior:</label>
+              <input type="text" id="actividadRealizada" name="actividadRealizada" class="form-control" readonly>
+            </div>
+            
+            <div class="mb-3">
+              <label for="proximaActividad" class="form-label">Próxima actividad:</label>
+              
+              <!-- Botones de radio -->
+              <div class="d-flex gap-3 align-items-center">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipoActividad" id="actividadCita" value="Cita" checked>
+                  <label class="form-check-label" for="actividadCita">Cita</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipoActividad" id="actividadLlamada" value="Llamada">
+                  <label class="form-check-label" for="actividadLlamada">Llamada</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="tipoActividad" id="actividadOtro" value="Otro">
+                  <label class="form-check-label" for="actividadOtro">Otro</label>
+                </div>
+              </div>
+              
+              <!-- Input de texto para "Otra" actividad -->
+              <input type="text"  maxlength="25" id="proximaActividad" name="proximaActividad" class="form-control mt-2" placeholder="Especificar actividad" disabled required>
+            </div>
+
+            <div class="mb-3">
+              <label for="observaciones" class="form-label">Observaciones:</label>
+              <textarea id="observaciones" name="observaciones" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="fechaProgramada" class="form-label">Fecha programada:</label>
+                <input type="date" id="fechaProgramada" name="fechaProgramada" class="form-control" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="horaProgramada" class="form-label">Hora programada:</label>
+                <input type="time" id="horaProgramada" name="horaProgramada" class="form-control">
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="prioridad" class="form-label">Prioridad:</label>
+              <select id="prioridad" name="prioridad" class="form-control" required>
+                <option value="Media" selected>Media</option>
+                <option value="Alta">Alta</option>
+                <option value="Baja">Baja</option>
+              </select>
+            </div>
+            
+            <button type="submit" id="saveActivity" class="btn btn-success w-100">Guardar actividad</button>
+          </form>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+<div class="modal fade" id="inactiveClientsModal" tabindex="-1" aria-labelledby="inactiveClientsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="inactiveClientsModalLabel">Clientes inactivos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <table id="inactiveClientsTable" class="table table-striped">
+          <thead>
+            <tr>
+              <th>#Cliente</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cliente in clientes %}
+            {% if not cliente.activo %}
+            <tr id="inactive-client-{{ cliente.id }}" data-id="{{ cliente.id }}">
+              <td>{{ cliente.numero_cliente }}</td>
+              <td>{{ cliente.nombre }}</td>
+              <td>{{ cliente.email }}</td>
+              <td>{{ cliente.telefono_movil }}</td>
+              <td>{{ cliente.direccion }}</td>
+              <td>
+                <button class="btn btn-success reactivar-cliente" data-id="{{ cliente.id }}">Reactivar</button>
+              </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script type="text/javascript" src="{% static 'js/clientes.js' %}"></script>
+{% endblock %}

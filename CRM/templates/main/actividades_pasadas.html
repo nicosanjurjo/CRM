@@ -1,0 +1,86 @@
+{% extends "main/index.html" %}
+{% load static %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{% static 'css/actividades.css' %}">{% endblock  %}
+{% block submenu %}
+<div class="submenu">
+    <a href="{% url 'actividadesPasadas' %}" 
+       class="submenu-item {% if request.path == '/actividades/pasadas/' %}active{% endif %}">
+       Actividades pasadas
+    </a>
+    <a href="{% url 'actividadesHoy' %}" 
+       class="submenu-item {% if request.path == '/actividades/hoy/' %}active{% endif %}">
+       Actividades para hoy
+    </a>
+    <a href="{% url 'actividadesFuturas' %}" 
+       class="submenu-item {% if request.path == '/actividades/futuras/' %}active{% endif %}">
+       Actividades futuras
+    </a>
+</div>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+   <h2>Actividades pasadas</h2>
+</div>
+<div class="container mt-4">
+
+     <!-- Tabla con DataTables -->
+     <div class="table-responsive mt-3">
+        <table id="actividades" class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Creada</th>.
+                    <th>Nombre cli.</th>
+                    <th>ID cli.</th>
+                    <th>Prioridad</th>
+                    <th>Actividad</th>
+                    <th>Fecha programada</th>
+                    <th>Hora programada</th>
+                    <th>Teléfono/WP</th>
+                    <th>Estado</th>
+                    <th>Actividad previa</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for actividad in actividades %}
+                {% if actividad.estado == 'Pendiente' and actividad.cliente.estado %}
+                 <tr class="actividad-row" data-id="{{ actividad.id }}" 
+                    data-actividad="{{ actividad.actividad_programada }}"
+                    data-observaciones="{{ actividad.observaciones }}"
+                    data-actividad-previa="{{ actividad.actividad_anterior }}"
+                    data-clienteid="{{ actividad.cliente.id }}"
+                    data-clientenombre="{{ actividad.cliente.nombre }}"
+                    data-estado="{{ actividad.get_estado_display }}"
+                    data-prioridad="{{ actividad.prioridad }}"
+                    data-fecha="{{ actividad.fecha }}"
+                    data-hora="{{ actividad.hora }}"
+                    data-email="{{ actividad.cliente.email }}">
+                    <td>{{ actividad.created_at | date:"d/m/y H:i"}}</td>
+                    <td>{{ actividad.cliente.nombre }}</td>
+                    <td>{{ actividad.cliente.id }}</td>
+                    <td>{{ actividad.prioridad }}</td>
+                    <td>{{ actividad.actividad_programada }}</td>
+                    <td>{{ actividad.fecha | date:"d/m/y" }}</td>
+                    <td>{{ actividad.hora }}</td>
+                    <td><span style="background-color: white; border-radius: 10px; padding: 5px;">
+                     <a href="https://wa.me/{{ actividad.cliente.telefono }}" target="_blank" class="text-decoration-none">
+                         {{ actividad.cliente.telefono_movil }}
+                     </a></span></td>
+                    <td>{{ actividad.estado }}</td>
+                    <td>{{ actividad.actividad_anterior }}</td>
+                    <td><button type="button" class="btn btn-primary seleccionar-actividad">Seleccionar</button></td>
+                 </tr>
+                 {% endif %}
+                 {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script type="text/javascript" src="{% static 'js/actividades.js' %}"></script>
+{% endblock %}
